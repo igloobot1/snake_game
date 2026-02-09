@@ -3,9 +3,14 @@ import * as THREE from 'three';
 // ── Config ──
 const GRID = 20;
 const CELL = 1;
-const BASE_INTERVAL = 150;
-const MIN_INTERVAL = 55;
 const HALF = (GRID * CELL) / 2;
+
+const LEVELS = {
+  easy:   { baseInterval: 200, minInterval: 90, speedup: 1.5 },
+  medium: { baseInterval: 150, minInterval: 55, speedup: 2.5 },
+  hard:   { baseInterval: 100, minInterval: 35, speedup: 3.5 },
+};
+let selectedLevel = 'medium';
 
 // ── DOM ──
 const scoreEl = document.getElementById('score');
@@ -191,7 +196,8 @@ function showOverlay(title, msg, extra) {
 }
 
 function interval() {
-  return Math.max(MIN_INTERVAL, BASE_INTERVAL - score * 2.5);
+  const lvl = LEVELS[selectedLevel];
+  return Math.max(lvl.minInterval, lvl.baseInterval - score * lvl.speedup);
 }
 
 function placeFood() {
@@ -383,7 +389,21 @@ window.addEventListener('keydown', e => {
 });
 
 overlay.addEventListener('click', () => { if (!running) startGame(); });
-titleScreen.addEventListener('click', () => { if (titleVisible) startGame(); });
+
+// Level selector buttons
+document.querySelectorAll('.level-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectedLevel = btn.dataset.level;
+    document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+
+titleScreen.addEventListener('click', (e) => {
+  if (e.target.classList.contains('level-btn')) return;
+  if (titleVisible) startGame();
+});
 
 // Touch / swipe
 let tx, ty;
