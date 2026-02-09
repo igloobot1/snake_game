@@ -12,6 +12,35 @@ const LEVELS = {
 };
 let selectedLevel = 'medium';
 
+const SNAKE_SKINS = {
+  classic: {
+    head:  { color: 0x7dd3fc, emissive: 0x7dd3fc, emissiveIntensity: 0.4 },
+    body:  { color: 0x38bdf8, emissive: 0x0e4a6e, emissiveIntensity: 0.15 },
+    tail:  { color: 0x0e4a6e, emissive: 0x0e4a6e, emissiveIntensity: 0.1 },
+  },
+  fire: {
+    head:  { color: 0xff6b35, emissive: 0xff6b35, emissiveIntensity: 0.5 },
+    body:  { color: 0xef4444, emissive: 0x991b1b, emissiveIntensity: 0.2 },
+    tail:  { color: 0x7f1d1d, emissive: 0x7f1d1d, emissiveIntensity: 0.15 },
+  },
+  toxic: {
+    head:  { color: 0x4ade80, emissive: 0x4ade80, emissiveIntensity: 0.4 },
+    body:  { color: 0x22c55e, emissive: 0x166534, emissiveIntensity: 0.15 },
+    tail:  { color: 0x14532d, emissive: 0x14532d, emissiveIntensity: 0.1 },
+  },
+  royal: {
+    head:  { color: 0xc084fc, emissive: 0xc084fc, emissiveIntensity: 0.4 },
+    body:  { color: 0xa855f7, emissive: 0x581c87, emissiveIntensity: 0.15 },
+    tail:  { color: 0x3b0764, emissive: 0x3b0764, emissiveIntensity: 0.1 },
+  },
+  gold: {
+    head:  { color: 0xfbbf24, emissive: 0xfbbf24, emissiveIntensity: 0.45 },
+    body:  { color: 0xf59e0b, emissive: 0x92400e, emissiveIntensity: 0.2 },
+    tail:  { color: 0x78350f, emissive: 0x78350f, emissiveIntensity: 0.1 },
+  },
+};
+let selectedSkin = 'classic';
+
 // ── DOM ──
 const scoreEl = document.getElementById('score');
 const highEl = document.getElementById('high-score');
@@ -168,6 +197,19 @@ muteBtn.addEventListener('click', () => {
 });
 document.body.appendChild(muteBtn);
 
+function applySkin(skinName) {
+  const skin = SNAKE_SKINS[skinName] || SNAKE_SKINS.classic;
+  headMat.color.setHex(skin.head.color);
+  headMat.emissive.setHex(skin.head.emissive);
+  headMat.emissiveIntensity = skin.head.emissiveIntensity;
+  bodyMat.color.setHex(skin.body.color);
+  bodyMat.emissive.setHex(skin.body.emissive);
+  bodyMat.emissiveIntensity = skin.body.emissiveIntensity;
+  tailMat.color.setHex(skin.tail.color);
+  tailMat.emissive.setHex(skin.tail.emissive);
+  tailMat.emissiveIntensity = skin.tail.emissiveIntensity;
+}
+
 // ── Game State ──
 let snake, dir, nextDir, food, foodMesh, score, highScore, running, lastTick;
 let snakeMeshes = [];
@@ -309,6 +351,7 @@ function startGame() {
   soundStart();
   dismissTitle();
   overlay.classList.add('hidden');
+  applySkin(selectedSkin);
   clearSnakeMeshes();
   const mid = Math.floor(GRID / 2);
   snake = [
@@ -400,8 +443,18 @@ document.querySelectorAll('.level-btn').forEach(btn => {
   });
 });
 
+// Snake selector buttons
+document.querySelectorAll('.snake-btn').forEach(btn => {
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    selectedSkin = btn.dataset.snake;
+    document.querySelectorAll('.snake-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  });
+});
+
 titleScreen.addEventListener('click', (e) => {
-  if (e.target.classList.contains('level-btn')) return;
+  if (e.target.classList.contains('level-btn') || e.target.classList.contains('snake-btn')) return;
   if (titleVisible) startGame();
 });
 
