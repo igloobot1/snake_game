@@ -49,6 +49,66 @@
       position: fixed; bottom: 12px; left: 0; right: 0;
       text-align: center; font-size: 0.75rem; color: #475569; z-index: 10;
     }
+
+    /* Title Screen */
+    #title-screen {
+      position: fixed; inset: 0; z-index: 30;
+      display: flex; justify-content: center; align-items: center;
+      background: radial-gradient(ellipse at center, #0f1a2e 0%, #0a0e17 70%);
+    }
+    #title-screen.hidden { display: none; }
+    #title-inner {
+      text-align: center;
+      animation: fadeIn 0.8s ease-out;
+    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    #title-snake-art {
+      font-size: 4rem;
+      margin-bottom: 8px;
+      animation: bob 2s ease-in-out infinite;
+    }
+    @keyframes bob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+    #title-name {
+      font-size: 3rem;
+      font-weight: 800;
+      background: linear-gradient(135deg, #7dd3fc, #38bdf8, #0ea5e9);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 4px;
+    }
+    #title-sub {
+      font-size: 1rem;
+      color: #64748b;
+      margin-bottom: 32px;
+    }
+    #title-instructions {
+      color: #94a3b8;
+      font-size: 0.9rem;
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+    #title-instructions kbd {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 4px;
+      padding: 2px 8px;
+      font-family: inherit;
+      font-size: 0.85rem;
+      color: #7dd3fc;
+    }
+    #title-start {
+      font-size: 1.15rem;
+      color: #7dd3fc;
+      animation: pulse 1.8s ease-in-out infinite;
+      cursor: pointer;
+    }
+    @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+    #title-footer {
+      margin-top: 40px;
+      font-size: 0.75rem;
+      color: #334155;
+    }
     canvas { display: block; }
   </style>
 </head>
@@ -63,13 +123,28 @@
       <span>Best: <span id="high-score">0</span></span>
     </div>
   </div>
-  <div id="overlay">
+  <div id="overlay" class="hidden">
     <div id="overlay-content">
       <h2 id="overlay-title">🐍 Snake 3D</h2>
       <p id="overlay-msg">Press Space or Tap to Start</p>
       <p id="final-score"></p>
     </div>
   </div>
+  <!-- Title Screen -->
+  <div id="title-screen">
+    <div id="title-inner">
+      <div id="title-snake-art">🐍</div>
+      <div id="title-name">SNAKE 3D</div>
+      <div id="title-sub">by <span class="accent">IglooBot</span></div>
+      <div id="title-instructions">
+        <kbd>↑</kbd> <kbd>↓</kbd> <kbd>←</kbd> <kbd>→</kbd> or <kbd>W</kbd> <kbd>A</kbd> <kbd>S</kbd> <kbd>D</kbd> to move<br>
+        Eat food to grow · Don't hit the walls or yourself
+      </div>
+      <div id="title-start">⏎ Press Space or Tap to Play</div>
+      <div id="title-footer">v1.1 — Best played on desktop</div>
+    </div>
+  </div>
+
   <p class="hint">Arrow keys / WASD to move</p>
 
   <script type="importmap">

@@ -113,6 +113,9 @@ let snake, dir, nextDir, food, foodMesh, score, highScore, running, lastTick;
 let snakeMeshes = [];
 let particles = [];
 
+const titleScreen = document.getElementById('title-screen');
+let titleVisible = true;
+
 highScore = parseInt(localStorage.getItem('snake3d_hi') || '0', 10);
 highEl.textContent = highScore;
 
@@ -233,7 +236,15 @@ function lerpSnake(t) {
 }
 
 // ── Game Logic ──
+function dismissTitle() {
+  if (titleVisible) {
+    titleScreen.classList.add('hidden');
+    titleVisible = false;
+  }
+}
+
 function startGame() {
+  dismissTitle();
   overlay.classList.add('hidden');
   clearSnakeMeshes();
   const mid = Math.floor(GRID / 2);
@@ -304,7 +315,7 @@ function setDir(x, z) {
 }
 
 window.addEventListener('keydown', e => {
-  if (['Space', 'Enter'].includes(e.code) && !running) return startGame();
+  if (['Space', 'Enter'].includes(e.code) && !running) { startGame(); return; }
   const map = {
     ArrowUp: [0, -1], ArrowDown: [0, 1], ArrowLeft: [-1, 0], ArrowRight: [1, 0],
     KeyW: [0, -1], KeyS: [0, 1], KeyA: [-1, 0], KeyD: [1, 0],
@@ -313,6 +324,7 @@ window.addEventListener('keydown', e => {
 });
 
 overlay.addEventListener('click', () => { if (!running) startGame(); });
+titleScreen.addEventListener('click', () => { if (titleVisible) startGame(); });
 
 // Touch / swipe
 let tx, ty;
