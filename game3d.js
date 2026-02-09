@@ -108,6 +108,61 @@ const segGeo = new THREE.BoxGeometry(CELL * 0.82, CELL * 0.55, CELL * 0.82, 1, 1
 const headGeo = new THREE.BoxGeometry(CELL * 0.88, CELL * 0.65, CELL * 0.88, 2, 2, 2);
 const foodGeo = new THREE.SphereGeometry(CELL * 0.35, 16, 16);
 
+// ── Sound System ──
+let audioCtx = null;
+let soundMuted = false;
+
+function ensureAudio() {
+  if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+}
+
+function playTone(freq, duration, type = 'square', volume = 0.15, ramp = true) {
+  if (soundMuted || !audioCtx) return;
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = type;
+  osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+  gain.gain.setValueAtTime(volume, audioCtx.currentTime);
+  if (ramp) gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start();
+  osc.stop(audioCtx.currentTime + duration);
+}
+
+function soundEat() {
+  playTone(600, 0.1, 'square', 0.12);
+  setTimeout(() => playTone(900, 0.15, 'square', 0.12), 50);
+}
+
+function soundGameOver() {
+  playTone(300, 0.2, 'sawtooth', 0.15);
+  setTimeout(() => playTone(200, 0.3, 'sawtooth', 0.15), 150);
+  setTimeout(() => playTone(100, 0.5, 'sawtooth', 0.12), 350);
+}
+
+function soundStart() {
+  playTone(400, 0.1, 'square', 0.1);
+  setTimeout(() => playTone(600, 0.1, 'square', 0.1), 80);
+  setTimeout(() => playTone(800, 0.2, 'square', 0.12), 160);
+}
+
+function soundTurn() {
+  playTone(440, 0.05, 'sine', 0.06);
+}
+
+// Mute toggle button
+const muteBtn = document.createElement('button');
+muteBtn.id = 'mute-btn';
+muteBtn.textContent = '🔊';
+muteBtn.style.cssText = 'position:fixed;top:12px;right:12px;z-index:50;background:rgba(15,23,42,0.7);border:1px solid #1e293b;color:#7dd3fc;font-size:1.5rem;width:44px;height:44px;border-radius:8px;cursor:pointer;display:flex;align-items:center;justify-content:center;';
+muteBtn.addEventListener('click', () => {
+  soundMuted = !soundMuted;
+  muteBtn.textContent = soundMuted ? '🔇' : '🔊';
+});
+document.body.appendChild(muteBtn);
+
 // ── Game State ──
 let snake, dir, nextDir, food, foodMesh, score, highScore, running, lastTick;
 let snakeMeshes = [];
@@ -244,6 +299,8 @@ function dismissTitle() {
 }
 
 function startGame() {
+  ensureAudio();
+  soundStart();
   dismissTitle();
   overlay.classList.add('hidden');
   clearSnakeMeshes();
@@ -289,6 +346,7 @@ function update() {
       highEl.textContent = highScore;
       localStorage.setItem('snake3d_hi', highScore);
     }
+    soundEat();
     spawnParticles(gridToWorld(food.x, food.z), 0xf87171, 12);
     placeFood();
   } else {
@@ -301,6 +359,7 @@ function update() {
 
 function gameOver() {
   running = false;
+  soundGameOver();
   // Explosion particles at head
   if (snake.length > 0) {
     spawnParticles(gridToWorld(snake[0].x, snake[0].z), 0x7dd3fc, 20);
@@ -310,8 +369,8 @@ function gameOver() {
 
 // ── Input ──
 function setDir(x, z) {
-  if (x !== 0 && dir.x === 0) nextDir = { x, z: 0 };
-  if (z !== 0 && dir.z === 0) nextDir = { x: 0, z };
+  if (x !== 0 && dir.x === 0) { nextDir = { x, z: 0 }; soundTurn(); }
+  if (z !== 0 && dir.z === 0) { nextDir = { x: 0, z }; soundTurn(); }
 }
 
 window.addEventListener('keydown', e => {
