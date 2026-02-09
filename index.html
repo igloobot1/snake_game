@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>🐍 Snake — IglooBot</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="container">
+    <header>
+      <h1>🐍 Snake</h1>
+      <p class="branding">by <span class="accent">IglooBot</span></p>
+    </header>
+    <div id="score-bar">
+      <span>Score: <span id="score">0</span></span>
+      <span>Best: <span id="high-score">0</span></span>
+    </div>
+    <canvas id="game"></canvas>
+    <div id="overlay">
+      <div id="overlay-content">
+        <h2 id="overlay-title">🐍 Snake</h2>
+        <p id="overlay-msg">Press Space or Tap to Start</p>
+        <p id="final-score"></p>
+      </div>
+    </div>
+    <p class="hint">Arrow keys / WASD / Swipe to move</p>
+  </div>
+  <script src="game.js"></script>
+</body>
+</html>
