@@ -3,29 +3,78 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>🐍 Snake — IglooBot</title>
-  <link rel="stylesheet" href="style.css">
+  <title>🐍 Snake 3D — IglooBot</title>
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      background: #0a0e17;
+      color: #e2e8f0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      overflow: hidden;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    #ui {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 16px 24px;
+      pointer-events: none;
+    }
+    #ui > * { pointer-events: auto; }
+    .title { font-size: 1.4rem; color: #7dd3fc; font-weight: 700; }
+    .branding { font-size: 0.75rem; color: #475569; }
+    .accent { color: #38bdf8; font-weight: 600; }
+    #score-bar {
+      display: flex; gap: 24px;
+      font-size: 1.05rem; font-weight: 600; color: #7dd3fc;
+    }
+    #overlay {
+      position: fixed; inset: 0; z-index: 20;
+      display: flex; justify-content: center; align-items: center;
+    }
+    #overlay.hidden { display: none; }
+    #overlay-content {
+      text-align: center;
+      background: rgba(10, 14, 23, 0.94);
+      border: 1px solid #1e293b;
+      border-radius: 16px;
+      padding: 40px 52px;
+      cursor: pointer;
+      backdrop-filter: blur(12px);
+    }
+    #overlay-title { font-size: 1.8rem; color: #7dd3fc; margin-bottom: 8px; }
+    #overlay-msg { color: #94a3b8; font-size: 1rem; }
+    #final-score { color: #38bdf8; font-size: 1.2rem; margin-top: 10px; font-weight: 600; }
+    .hint {
+      position: fixed; bottom: 12px; left: 0; right: 0;
+      text-align: center; font-size: 0.75rem; color: #475569; z-index: 10;
+    }
+    canvas { display: block; }
+  </style>
 </head>
 <body>
-  <div id="container">
-    <header>
-      <h1>🐍 Snake</h1>
-      <p class="branding">by <span class="accent">IglooBot</span></p>
-    </header>
+  <div id="ui">
+    <div>
+      <div class="title">🐍 Snake 3D</div>
+      <div class="branding">by <span class="accent">IglooBot</span></div>
+    </div>
     <div id="score-bar">
       <span>Score: <span id="score">0</span></span>
       <span>Best: <span id="high-score">0</span></span>
     </div>
-    <canvas id="game"></canvas>
-    <div id="overlay">
-      <div id="overlay-content">
-        <h2 id="overlay-title">🐍 Snake</h2>
-        <p id="overlay-msg">Press Space or Tap to Start</p>
-        <p id="final-score"></p>
-      </div>
-    </div>
-    <p class="hint">Arrow keys / WASD / Swipe to move</p>
   </div>
-  <script src="game.js"></script>
+  <div id="overlay">
+    <div id="overlay-content">
+      <h2 id="overlay-title">🐍 Snake 3D</h2>
+      <p id="overlay-msg">Press Space or Tap to Start</p>
+      <p id="final-score"></p>
+    </div>
+  </div>
+  <p class="hint">Arrow keys / WASD to move</p>
+
+  <script type="importmap">
+  { "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+  </script>
+  <script type="module" src="game3d.js"></script>
 </body>
 </html>
